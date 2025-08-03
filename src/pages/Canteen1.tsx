@@ -1,87 +1,111 @@
 import React, { useState, useEffect } from 'react';
 
-const FOOD_SECTIONS = [
+interface FoodItem {
+  id: number;
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
+  sugar: number;
+}
+
+interface FoodSection {
+  section: string;
+  items: FoodItem[];
+}
+
+const FOOD_SECTIONS: FoodSection[] = [
   {
-    section: 'Beverages & Cold Items',
+    section: 'Beverages',
     items: [
-      { id: 1, name: 'Pineapple Shake', calories: 210, protein: 4, carbs: 35, fats: 6, sugar: 30 },
-      { id: 2, name: 'Cold Coffee', calories: 150, protein: 5, carbs: 20, fats: 4, sugar: 12 },
-      { id: 3, name: 'Chuski', calories: 60, protein: 0, carbs: 15, fats: 0, sugar: 14 },
-      { id: 4, name: 'Cold Drinks', calories: 140, protein: 0, carbs: 39, fats: 0, sugar: 35 },
-      { id: 5, name: 'Shikanji', calories: 50, protein: 0, carbs: 12, fats: 0, sugar: 10 },
+      { id: 1, name: 'Coke', calories: 139, protein: 0, carbs: 35, fats: 0, sugar: 65 },
+      { id: 2, name: 'Pepsi', calories: 65, protein: 0, carbs: 65, fats: 0, sugar: 65 },
+      { id: 3, name: 'Amul Chach', calories: 29, protein: 1.7, carbs: 2.3, fats: 1.5, sugar: 8 },
+      { id: 4, name: 'Amul Lassi', calories: 79, protein: 2.3, carbs: 12.8, fats: 2.1, sugar: 12 },
+      { id: 5, name: 'Amul Kool', calories: 89, protein: 3.2, carbs: 12, fats: 3.1, sugar: 12 },
     ],
   },
   {
-    section: 'Desserts & Snacks',
+    section: 'Packet Items - Chips',
     items: [
-      { id: 6, name: 'Icecream', calories: 200, protein: 3, carbs: 25, fats: 10, sugar: 17 },
-      { id: 7, name: 'Chocobar', calories: 250, protein: 4, carbs: 30, fats: 14, sugar: 21 },
-      { id: 8, name: 'Cone', calories: 180, protein: 3, carbs: 28, fats: 7, sugar: 17 },
-      { id: 9, name: 'Cakes', calories: 300, protein: 5, carbs: 40, fats: 15, sugar: 25 },
+      { id: 6, name: 'Kurkure', calories: 556, protein: 6.4, carbs: 56.8, fats: 33.7, sugar: 1.7 },
+      { id: 7, name: 'Uncle Chips', calories: 536, protein: 6.4, carbs: 54.6, fats: 32.4, sugar: 2.2 },
+      { id: 8, name: 'Lays', calories: 553, protein: 6.7, carbs: 52.6, fats: 35.1, sugar: 0 },
+      { id: 9, name: 'Bingo Mad Angles', calories: 526, protein: 5.6, carbs: 61.2, fats: 29.5, sugar: 2.9 },
     ],
   },
   {
-    section: 'Hot Drinks',
+    section: 'Chocolates',
     items: [
-      { id: 10, name: 'Tea', calories: 30, protein: 1, carbs: 5, fats: 1, sugar: 7 },
-      { id: 11, name: 'Hot Coffee', calories: 60, protein: 3, carbs: 8, fats: 2, sugar: 11 },
+      { id: 10, name: 'Dairy Milk', calories: 531, protein: 7.9, carbs: 60.4, fats: 29.0, sugar: 57 },
+      { id: 11, name: 'KitKat', calories: 438, protein: 6.4, carbs: 47.4, fats: 24.8, sugar: 35 },
+      { id: 12, name: 'Nutties', calories: 511, protein: 5.0, carbs: 67.2, fats: 24.8, sugar: 61 },
+      { id: 13, name: 'Dairy Milk Oreo', calories: 563, protein: 6.0, carbs: 56.9, fats: 34.8, sugar: 48 },
+      { id: 14, name: 'Fruit & Nut', calories: 522, protein: 8.5, carbs: 59, fats: 28.6, sugar: 52.3 },
+      { id: 15, name: 'Crispello', calories: 522, protein: 5.2, carbs: 64.8, fats: 27.6, sugar: 48.7 },
+      { id: 16, name: 'MilkyBar', calories: 524, protein: 11.1, carbs: 50.1, fats: 30, sugar: 40 },
+      { id: 17, name: '5 Star 3D', calories: 504, protein: 3.4, carbs: 64.7, fats: 26.9, sugar: 51 },
+      { id: 18, name: 'Snickers', calories: 501, protein: 9.9, carbs: 58.3, fats: 26.6, sugar: 47.6 },
+      { id: 19, name: 'Amul Dark Chocolate', calories: 531, protein: 6.4, carbs: 57.4, fats: 33.1, sugar: 43 },
     ],
   },
 ];
 
-function Canteen2() {
-  const [quantities, setQuantities] = useState({});
-  const [totals, setTotals] = useState(null);
+export default function Canteen1() {
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [totals, setTotals] = useState<{
+    calories: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+    sugar: number;
+  } | null>(null);
   const [fadeIn, setFadeIn] = useState(false);
 
   const allItems = FOOD_SECTIONS.flatMap((section) => section.items);
 
-  useEffect(() => {
-    setFadeIn(true);
-  }, []);
+  useEffect(() => setFadeIn(true), []);
 
-  const isSelected = (id) => quantities[id] > 0;
+  const isSelected = (id: number) => (quantities[id] ?? 0) > 0;
 
-  const toggleSelection = (id) => {
-    setQuantities((prev) => {
-      if (prev[id] > 0) {
-        const newQuantities = { ...prev };
-        delete newQuantities[id];
-        return newQuantities;
-      } else {
-        return { ...prev, [id]: 1 };
+  const toggleSelection = (id: number) => {
+    setQuantities(prev => {
+      if (prev[id] && prev[id] > 0) {
+        const copy = { ...prev };
+        delete copy[id];
+        return copy;
       }
+      return { ...prev, [id]: 1 };
     });
   };
 
-  const updateQuantity = (id, qty) => {
+  const updateQuantity = (id: number, qty: number) => {
     if (qty < 1) return;
-    setQuantities((prev) => ({ ...prev, [id]: qty }));
+    setQuantities(prev => ({ ...prev, [id]: qty }));
   };
 
-  const incrementQuantity = (id) => {
-    const current = quantities[id] || 0;
-    updateQuantity(id, current + 1);
+  const incrementQuantity = (id: number) => {
+    const qty = quantities[id] ?? 0;
+    updateQuantity(id, qty + 1);
   };
 
-  const decrementQuantity = (id) => {
-    const current = quantities[id] || 0;
-    if (current > 1) {
-      updateQuantity(id, current - 1);
-    }
+  const decrementQuantity = (id: number) => {
+    const qty = quantities[id] ?? 0;
+    if (qty > 1) updateQuantity(id, qty - 1);
   };
 
   const calculateTotals = () => {
-    const selectedItems = allItems.filter((item) => isSelected(item.id));
+    const selectedItems = allItems.filter(item => isSelected(item.id));
     const totals = selectedItems.reduce(
       (acc, item) => {
-        const qty = quantities[item.id] || 1;
+        const qty = quantities[item.id] ?? 1;
         return {
           calories: acc.calories + item.calories * qty,
           protein: acc.protein + item.protein * qty,
           carbs: acc.carbs + item.carbs * qty,
           fats: acc.fats + item.fats * qty,
-          sugar: acc.sugar + (item.sugar || 0) * qty,
+          sugar: acc.sugar + item.sugar * qty,
         };
       },
       { calories: 0, protein: 0, carbs: 0, fats: 0, sugar: 0 }
@@ -96,48 +120,46 @@ function Canteen2() {
 
   const styleTag = `
     @keyframes gradientFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% { background-position: 0% 70%; }
+      50% { background-position: 100% 30%; }
+      100% { background-position: 0% 70%; }
     }
     .canteen-card {
-      background: rgba(245, 243, 251, 0.92);
-      border-radius: 2.5rem;
-      box-shadow:
-        0 10px 30px rgba(167, 155, 208, 0.15),
-        0 4px 20px rgba(196, 183, 222, 0.12);
-      backdrop-filter: blur(22px);
-      max-width: 560px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 2rem;
+      box-shadow: 0 6px 36px rgba(110,138,255,0.10), 0 4px 28px rgba(244, 213, 248, 0.08);
+      backdrop-filter: blur(24px);
+      max-width: 540px;
       width: 100%;
-      padding: 3.5rem 4rem;
-      margin: 1.8rem;
+      padding: 3rem 3.5rem;
+      margin: 1.5rem;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
       transition: opacity 0.6s ease;
-      color: #5b4e8a;
+      color: #41725f;
       font-family: 'Inter', sans-serif;
     }
     .menu-title {
-      font-size: 2.6rem;
+      font-size: 2.5rem;
+      color: #4f59c5;
       margin-bottom: 1rem;
+      letter-spacing: 0.03em;
       font-weight: 900;
-      font-family: 'Poppins', 'Inter', Arial, sans-serif;
-      text-shadow: 0 3px 8px rgba(91, 78, 138, 0.3);
-      letter-spacing: 0.05em;
-      color: #5b4e8a;
+      font-family: 'Poppins, Inter, Arial, sans-serif';
+      text-shadow: 0 3px 12px #d4dbfa33;
     }
     h2.section-header {
-      color: #7e73b8;
-      margin-bottom: 1rem;
-      border-bottom: 3px solid #b7aedf;
-      padding-bottom: 6px;
+      color: #6c63ff;
+      margin-bottom: 0.75rem;
+      border-bottom: 2px solid #a29bfe;
+      padding-bottom: 4px;
       font-weight: 700;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       text-align: left;
-      max-width: 440px;
+      max-width: 400px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -146,32 +168,32 @@ function Canteen2() {
       padding: 0;
       margin: 0 0 2rem 0;
       width: 100%;
-      max-width: 440px;
+      max-width: 400px;
       font-size: 1.1rem;
-      color: #6e63b3;
     }
     li.item {
-      padding: 0.8rem 1rem;
+      padding: 0.75rem 1rem;
       margin-bottom: 0.5rem;
-      background: #f7f5fc;
-      border-radius: 12px;
+      background: #f7fbff;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: all 0.3s ease;
+      transition: all 0.24s ease;
       user-select: none;
       font-weight: 700;
+      color: #7d8cff;
       border: 2px solid transparent;
     }
     li.item.selected {
-      background: linear-gradient(90deg, #cbc5ef, #d6ccff);
-      box-shadow: 0 0 12px rgba(114, 104, 169, 0.55);
-      border: 2px solid #796cd1;
-      color: #5b4e8a;
+      background: linear-gradient(90deg,#dbeafe,#e7fbf6);
+      box-shadow: 0 0 8px #909ffe77;
+      border: 2px solid #6c63ff44;
+      color: #4f59c5;
     }
     li.item:hover {
-      filter: brightness(1.07);
+      filter: brightness(1.05);
     }
     .quantity-controls {
       display: flex;
@@ -180,127 +202,122 @@ function Canteen2() {
       user-select: none;
     }
     button.qty-btn {
-      padding: 0 9px;
+      padding: 0 10px;
       cursor: pointer;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       border: none;
-      background-color: #907ecf99;
-      color: #6a56b1;
-      border-radius: 6px;
+      background-color: #6c63ff33;
+      color: #6c63ff;
+      border-radius: 5px;
       line-height: 1;
       user-select: none;
       transition: background-color 0.3s ease;
     }
     button.qty-btn:hover {
-      background-color: #a892e599;
+      background-color: #807cff88;
     }
     input.quantity-input {
-      width: 44px;
+      width: 42px;
       text-align: center;
       font-size: 1rem;
       border-radius: 6px;
-      border: 1.6px solid #aca0d3;
-      outline-color: #7365d6;
+      border: 1.5px solid #a3a3a3;
+      outline-color: #6c63ff;
       user-select: none;
       transition: border-color 0.3s ease;
-      background-color: #f9f8fe;
-      color: #5a4f8b;
     }
     input.quantity-input:focus {
-      border-color: #7365d6;
-      box-shadow: 0 0 6px #aca7e099;
+      border-color: #6c63ff;
     }
     .buttons-container {
       display: flex;
-      gap: 1.3rem;
+      gap: 1.2rem;
       justify-content: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
       flex-wrap: wrap;
       width: 100%;
-      max-width: 440px;
+      max-width: 400px;
     }
     button.action-btn {
       padding: 0.75rem 2rem;
-      font-size: 1.15rem;
-      font-weight: 700;
+      font-size: 1.17rem;
+      font-weight: 600;
       border: none;
-      border-radius: 11px;
+      border-radius: 10px;
       cursor: pointer;
       flex-grow: 1;
-      min-width: 160px;
-      transition: all 0.25s ease;
+      min-width: 150px;
+      transition: all 0.21s ease;
       user-select: none;
-      box-shadow: 0 4px 20px transparent;
     }
     button.action-btn:disabled {
       cursor: not-allowed;
       opacity: 0.5;
-      box-shadow: none !important;
+      box-shadow: none;
     }
     button.calc-btn {
-      background: linear-gradient(100deg, #9989d9, #beb3f4);
-      color: #4d3c90;
-      box-shadow: 0 6px 28px #b7adefcc;
+      background: linear-gradient(90deg,#a1c4fd,#c2e9fb);
+      color: #304356;
+      box-shadow: 0 4px 18px #a1c4fd33;
     }
     button.calc-btn:disabled {
-      background: #c4bbef66;
-      color: #7d71bfbb;
+      background: linear-gradient(90deg, #ddd, #eee);
+      color: #888;
       box-shadow: none;
     }
     button.clear-btn {
-      background: #e7e1ff;
-      color: #6e5ec7;
-      box-shadow: 0 6px 18px #c5bcfabe;
+      background: #ffe2ec;
+      color: #ba4184;
+      box-shadow: 0 4px 14px #ffbbe933;
     }
     .totals-display {
-      background: rgba(189, 182, 244, 0.15);
-      border-radius: 14px;
-      padding: 1.2rem 2rem;
-      color: #4a3f80;
-      font-size: 1.15rem;
+      background: rgba(159,207,250,0.12);
+      border-radius: 13px;
+      padding: 1rem 1.8rem;
+      color: #294d5e;
+      font-size: 1.14rem;
       width: 100%;
-      max-width: 440px;
+      max-width: 400px;
       text-align: left;
-      box-shadow: 0 2px 9px #c2bbea88;
+      box-shadow: 0 1px 7px #c2e9fb30;
       user-select: none;
     }
     .totals-display h2 {
       margin-top: 0;
-      margin-bottom: 1.2rem;
-      font-weight: 800;
-      font-size: 1.3rem;
-      color: #5349a8;
-      letter-spacing: 0.03em;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      font-size: 1.21rem;
+      color: #5c5d8d;
     }
 
-    /* Responsive tweaks */
-    @media (max-width: 720px) {
+
+    @media (max-width: 700px) {
       .canteen-card {
         max-width: 96vw !important;
-        padding: 2rem 1.5rem !important;
+        padding: 1.5rem 1rem !important;
       }
       button.qty-btn {
         font-size: 1.1rem;
-        padding: 0 7px;
+        padding: 0 6px;
       }
       input.quantity-input {
-        width: 40px !important;
-        font-size: 0.9rem !important;
+        width: 36px !important;
+        font-size: 0.85rem !important;
       }
       .menu-title {
-        font-size: 2.3rem !important;
+        font-size: 2.2rem !important;
       }
       .buttons-container {
-        gap: 1rem !important;
+        gap: 0.9rem !important;
       }
     }
     @media (max-width: 450px) {
       .canteen-card {
-        border-radius: 1.6rem !important;
-        padding: 1.2rem 0.6rem !important;
+        border-radius: 1.2rem !important;
+        padding: 1rem 0.4rem !important;
       }
       .menu-title {
-        font-size: 1.9rem !important;
+        font-size: 1.8rem !important;
       }
       .buttons-container {
         flex-direction: column;
@@ -309,8 +326,8 @@ function Canteen2() {
         min-width: 100% !important;
       }
       input.quantity-input {
-        width: 32px !important;
-        font-size: 0.85rem !important;
+        width: 30px !important;
+        font-size: 0.8rem !important;
       }
     }
   `;
@@ -326,9 +343,9 @@ function Canteen2() {
           overflowY: 'auto',
           overscrollBehavior: 'contain',
           background:
-            'linear-gradient(120deg, #f7f5ff 0%, #dbd7f8 40%, #f5e9ff 70%, #efedff 100%)',
-          backgroundSize: '300% 300%',
-          animation: 'gradientFlow 25s ease-in-out infinite',
+            'linear-gradient(120deg, #f9fbff 0%, #c9e4f6 30%, #f7dde9 70%, #fff6ea 100%)',
+          backgroundSize: '350% 350%',
+          animation: 'gradientFlow 20s ease-in-out infinite',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -344,34 +361,34 @@ function Canteen2() {
           style={{
             position: 'absolute',
             borderRadius: '50%',
-            filter: 'blur(55px)',
-            opacity: 0.28,
+            filter: 'blur(50px)',
+            opacity: 0.35,
             zIndex: 0,
-            top: 45,
-            left: 25,
-            width: 110,
-            height: 110,
-            background: '#baa3f0',
+            top: 50,
+            left: 30,
+            width: 100,
+            height: 100,
+            background: '#e3e5fe',
           }}
         />
         <div
           style={{
             position: 'absolute',
             borderRadius: '50%',
-            filter: 'blur(55px)',
-            opacity: 0.3,
+            filter: 'blur(50px)',
+            opacity: 0.35,
             zIndex: 0,
-            bottom: 70,
-            right: 55,
-            width: 150,
-            height: 150,
-            background: '#d9bdff',
+            bottom: 60,
+            right: 50,
+            width: 140,
+            height: 140,
+            background: '#ffdadb',
           }}
         />
 
         {/* Content Card */}
         <div className="canteen-card" style={{ opacity: fadeIn ? 1 : 0 }}>
-          <h1 className="menu-title">Plant J Canteen Menu</h1>
+          <h1 className="menu-title">Amul Canteen Menu</h1>
 
           <p>
             Select items to build your meal:
@@ -381,7 +398,7 @@ function Canteen2() {
 
           {/* Category Sections */}
           {FOOD_SECTIONS.map((section) => (
-            <div key={section.section} style={{ width: '100%', maxWidth: 440, marginBottom: '1.8rem' }}>
+            <div key={section.section} style={{ width: '100%', maxWidth: 400, marginBottom: '1.75rem' }}>
               <h2 className="section-header">{section.section}</h2>
               <ul className="item-list">
                 {section.items.map((item) => {
@@ -391,24 +408,12 @@ function Canteen2() {
                   return (
                     <li
                       key={item.id}
-                      className={selected ? 'item selected' : 'item'}
+                      className={`${selected ? 'item selected' : 'item'}`}
                       onClick={() => toggleSelection(item.id)}
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          toggleSelection(item.id);
-                        }
-                      }}
                     >
                       <div>{item.name}</div>
 
-                      <div
-                        className="quantity-controls"
-                        onClick={(e) => e.stopPropagation()}
-                        role="group"
-                        aria-label={`Quantity controls for ${item.name}`}
-                      >
+                      <div className="quantity-controls" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
                           checked={selected}
@@ -417,7 +422,12 @@ function Canteen2() {
                         />
                         {selected && (
                           <>
-                            <button className="qty-btn" type="button" onClick={() => decrementQuantity(item.id)} aria-label={`Decrease quantity of ${item.name}`}>
+                            <button
+                              className="qty-btn"
+                              type="button"
+                              onClick={() => decrementQuantity(item.id)}
+                              aria-label={`Decrease quantity of ${item.name}`}
+                            >
                               –
                             </button>
                             <input
@@ -431,7 +441,12 @@ function Canteen2() {
                               }}
                               aria-label={`Quantity for ${item.name}`}
                             />
-                            <button className="qty-btn" type="button" onClick={() => incrementQuantity(item.id)} aria-label={`Increase quantity of ${item.name}`}>
+                            <button
+                              className="qty-btn"
+                              type="button"
+                              onClick={() => incrementQuantity(item.id)}
+                              aria-label={`Increase quantity of ${item.name}`}
+                            >
                               +
                             </button>
                           </>
@@ -494,4 +509,4 @@ function Canteen2() {
   );
 }
 
-export default Canteen2;
+
